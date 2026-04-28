@@ -1,0 +1,29 @@
+# Core training
+unsloth
+torch
+transformers
+peft
+trl
+accelerate
+bitsandbytes
+xformers
+triton
+
+# Data pipeline
+datasets
+pandas
+scikit-learn
+langdetect
+pydantic
+openai
+python-dotenv
+
+# Experiment tracking
+mlflow==2.19.0
+
+# Evaluation
+rouge-score
+bert-score
+
+# Serving
+vllm

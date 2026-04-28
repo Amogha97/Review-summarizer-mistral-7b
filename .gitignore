@@ -1,0 +1,33 @@
+# Model weights (too large for git)
+merged_model/
+adapters_*/
+*.bin
+*.safetensors
+
+# Training outputs
+results_*/
+best_checkpoint_*/
+
+# Data (regeneratable)
+data/raw/
+*.parquet
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# API keys
+.env

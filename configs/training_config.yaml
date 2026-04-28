@@ -1,0 +1,65 @@
+# Training configuration for the winning experiment (Run 4)
+# Product Review Summarizer — QLoRA Fine-Tuning
+
+model:
+  name: "unsloth/mistral-7b-instruct-v0.3-bnb-4bit"
+  max_seq_length: 2048
+  load_in_4bit: true
+  quantization: "nf4"
+
+lora:
+  rank: 16
+  alpha: 16
+  dropout: 0
+  bias: "none"
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  gradient_checkpointing: "unsloth"
+
+training:
+  epochs: 2
+  learning_rate: 1.5e-4
+  lr_scheduler: "cosine"
+  warmup_steps: 30
+  weight_decay: 0.01
+  per_device_batch_size: 2
+  gradient_accumulation_steps: 4
+  effective_batch_size: 8  # batch_size × grad_accum
+  optimizer: "adamw_8bit"
+  fp16: true
+  seed: 42
+
+evaluation:
+  strategy: "steps"
+  eval_steps: 50
+  save_steps: 50
+  save_total_limit: 2
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+
+early_stopping:
+  patience: 3
+
+data:
+  source: "amazon_polarity"
+  total_examples: 3000
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  language: "en"
+  review_length_min: 100
+  review_length_max: 1000
+  label_model: "gpt-4o-mini"
+  label_temperature: 0.3
+
+prompt_template: |
+  <s>[INST] {instruction}
+
+  {input} [/INST]
+  {output}</s>

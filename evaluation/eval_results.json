@@ -1,0 +1,30 @@
+{
+  "rouge_l": {
+    "base": 0.2115,
+    "finetuned": 0.5711,
+    "improvement_pct": 170.1
+  },
+  "bertscore": {
+    "base": 0.8655,
+    "finetuned": 0.9540,
+    "improvement_pct": 10.2
+  },
+  "llm_judge": {
+    "base": {
+      "structure": 4.98,
+      "accuracy": 4.54,
+      "completeness": 4.80,
+      "conciseness": 3.96,
+      "overall": 4.62
+    },
+    "finetuned": {
+      "structure": 5.00,
+      "accuracy": 4.40,
+      "completeness": 4.14,
+      "conciseness": 4.76,
+      "overall": 4.36
+    }
+  },
+  "test_set_size": 187,
+  "judge_sample_size": 50
+}
