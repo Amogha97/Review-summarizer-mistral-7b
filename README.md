@@ -219,10 +219,13 @@ python serving/client.py --review "Great laptop but heavy" --rating 4
 | GPT-4o-mini evaluation (LLM judge) | ~$1.00 |
 | **Total** | **~$1.50** |
 
-## Lessons Learned
+## Key Design Decisions
 
-1. **Data quality > quantity:** 3,000 well-labeled examples with Pydantic validation produced better results than noisy larger datasets would have.
-2. **Save artifacts immediately:** Lost trained adapters in a Colab crash because saving to Drive was in a separate cell. Fixed by saving inside the training function.
-3. **Overfitting is fast on small datasets:** 3 epochs memorized training data (train loss 0.16, val loss 1.90). 2 epochs + early stopping was the fix.
-4. **Higher rank ≠ better:** rank=32 (1.426 val loss) didn't beat rank=16 (1.419). The task's complexity didn't need more parameters.
-5. **Always evaluate against the base model:** The base Mistral-7B-Instruct already produces decent analysis — fine-tuning's value is in consistent structured output (170% ROUGE-L improvement).
+| Decision | Alternatives Considered | Rationale |
+|----------|------------------------|-----------|
+| QLoRA (4-bit) over full LoRA (16-bit) | Full fine-tuning, LoRA 16-bit | 4x memory reduction (14GB → 3.5GB) with no measurable quality loss. Enables training on free Colab T4. |
+| GPT-4o-mini for label generation | Human annotation, rule-based extraction | $0.50 for 3000 labels vs $3000+ for human annotators. Pydantic validation catches malformed outputs at the source. |
+| Rank 16 over rank 32 | r=8, r=32, r=64 | Experimentally validated: r=32 (val loss 1.426) showed no improvement over r=16 (val loss 1.419). Lower rank = smaller adapter, faster inference. |
+| 2 epochs with early stopping | 1 epoch, 3 epochs | 3 epochs overfit (val loss 1.475 → 1.903). 1 epoch underfit (val loss stuck at 1.592). 2 epochs + patience=3 converges at step 200. |
+| Stratified split with oversampling | Random split, downsampling | Rating-3 had only 48 examples. Stratified split ensures test set represents all ratings. Oversampling applied to training set only. |
+| Multiple evaluation metrics | ROUGE-L only | ROUGE-L captures format adherence (+170%). BERTScore captures semantic quality (+10.2%). LLM-judge reveals tradeoffs (conciseness vs completeness). |
