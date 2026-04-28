@@ -59,26 +59,26 @@ Ran 6 experiments systematically varying epochs, learning rate, and LoRA rank:
 ┌─────────────────────────────────────────────────────────────┐
 │                     DATA PIPELINE                           │
 │                                                             │
-│  Amazon Polarity ──→ Clean + Filter ──→ GPT-4o-mini ──→    │
+│  Amazon Polarity ──→ Clean + Filter ──→ GPT-4o-mini ──→     │
 │  (3.6M reviews)     English only       Label Generation     │
-│                     100-1000 chars     (Pydantic validated)  │
+│                     100-1000 chars     (Pydantic validated) │
 │                                             │               │
-│                     Balance + Stratified Split               │
+│                     Balance + Stratified Split              │
 │                     Train: 1400+ │ Val: 180 │ Test: 187     │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   TRAINING PIPELINE                          │
+│                   TRAINING PIPELINE                         │
 │                                                             │
-│  Mistral-7B-Instruct-v0.3 (4-bit NF4 quantized)           │
+│  Mistral-7B-Instruct-v0.3 (4-bit NF4 quantized)             │
 │       │                                                     │
-│       ├── LoRA Adapters (r=16, α=16)                       │
-│       │   Target: q, k, v, o, gate, up, down projections   │
-│       │   Trainable: 42M / 7.2B params (0.58%)             │
+│       ├── LoRA Adapters (r=16, α=16)                        │
+│       │   Target: q, k, v, o, gate, up, down projections    │
+│       │   Trainable: 42M / 7.2B params (0.58%)              │
 │       │                                                     │
-│       ├── SFTTrainer + Unsloth (2x faster)                 │
-│       │   AdamW 8-bit, cosine scheduler, warmup=30         │
+│       ├── SFTTrainer + Unsloth (2x faster)                  │
+│       │   AdamW 8-bit, cosine scheduler, warmup=30          │
 │       │                                                     │
 │       └── MLflow Experiment Tracking                        │
 │           6 runs, early stopping, stratified evaluation     │
@@ -86,18 +86,18 @@ Ran 6 experiments systematically varying epochs, learning rate, and LoRA rank:
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  EVALUATION PIPELINE                         │
+│                  EVALUATION PIPELINE                        │
 │                                                             │
-│  ROUGE-L ────→ Surface overlap (+170% vs base)             │
-│  BERTScore ──→ Semantic similarity (+10.2% vs base)        │
-│  LLM Judge ──→ Structure, accuracy, completeness (GPT-4o)  │
+│  ROUGE-L ────→ Surface overlap (+170% vs base)              │
+│  BERTScore ──→ Semantic similarity (+10.2% vs base)         │
+│  LLM Judge ──→ Structure, accuracy, completeness (GPT-4o)   │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  SERVING (vLLM)                              │
+│                  SERVING (vLLM)                             │
 │                                                             │
-│  vLLM Server ──→ OpenAI-compatible API                     │
+│  vLLM Server ──→ OpenAI-compatible API                      │
 │  LoRA adapter serving (no merge needed)                     │
 │  Docker + docker-compose for production                     │
 │  See serving/ directory for deployment files                │
