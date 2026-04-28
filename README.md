@@ -1,4 +1,4 @@
-# Product Review Summarizer — QLoRA Fine-Tuned Mistral-7B
+# Product Review Summarizer - QLoRA Fine-Tuned Mistral-7B
 
 Fine-tuned Mistral-7B using QLoRA (4-bit, rank-16) on 3,000+ product reviews to generate structured summaries (pros, cons, verdict). Tracked 6 experiments with MLflow. Evaluated with ROUGE-L, BERTScore, and LLM-as-a-Judge scoring.
 
@@ -37,7 +37,7 @@ Ran 6 experiments systematically varying epochs, learning rate, and LoRA rank:
 
 ![MLflow Runs Table](screenshots/mlflow_runs_table.png)
 
-### Parallel Coordinates — Hyperparameter to Metric Mapping
+### Parallel Coordinates - Hyperparameter to Metric Mapping
 
 ![MLflow Parallel Coordinates](screenshots/mlflow_parallel_coords.png)
 
@@ -45,10 +45,10 @@ Ran 6 experiments systematically varying epochs, learning rate, and LoRA rank:
 
 | Run | Epochs | LR | Rank | Best Val Loss | Finding |
 |-----|--------|----|------|--------------|---------|
-| Run 1 | 3 | 2e-4 | 16 | 1.475 | Overfit — val loss rose to 1.903 |
-| Run 2 | 1 | 1e-4 | 16 | 1.592 | Underfit — model barely learned |
-| Run 3 | 2 | 2e-4 | 16 | 1.422 | Good — 2 epochs is the sweet spot |
-| **Run 4** | **2** | **1.5e-4** | **16** | **1.419** | **Winner — best generalization** |
+| Run 1 | 3 | 2e-4 | 16 | 1.475 | Overfit - val loss rose to 1.903 |
+| Run 2 | 1 | 1e-4 | 16 | 1.592 | Underfit - model barely learned |
+| Run 3 | 2 | 2e-4 | 16 | 1.422 | Good - 2 epochs is the sweet spot |
+| **Run 4** | **2** | **1.5e-4** | **16** | **1.419** | **Winner - best generalization** |
 | Run 5 | 2 | 2e-4 | 32 | 1.426 | Higher rank didn't help |
 
 **Key Insight:** For ~1800 unique training examples, rank=16 with 2 epochs and lr=1.5e-4 is optimal. Higher rank adds capacity without improving generalization. Early stopping at patience=3 catches overfitting at step ~200 across all successful runs.
@@ -201,7 +201,7 @@ python serving/client.py --review "Great laptop but heavy" --rating 4
 
 - **Dataset:** 3,000 Amazon product reviews (Amazon Polarity), balanced across sentiments, English-only (langdetect filtered)
 - **Labels:** Generated via GPT-4o-mini distillation, validated with Pydantic schema (type checking, rating clamping 1-5, empty list handling)
-- **Quantization:** 4-bit NF4 (Normal Float 4-bit) — reduces base model from 14GB to 3.5GB VRAM
+- **Quantization:** 4-bit NF4 (Normal Float 4-bit) - reduces base model from 14GB to 3.5GB VRAM
 - **LoRA Config:** rank=16, alpha=16, targets all linear layers (q, k, v, o, gate, up, down), trainable params: 42M (0.58% of 7.2B)
 - **Training:** AdamW 8-bit optimizer, cosine LR schedule, warmup=30 steps, weight_decay=0.01
 - **Best Run:** 2 epochs, lr=1.5e-4, early stopping patience=3, best checkpoint at step 200
